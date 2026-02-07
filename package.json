@@ -28,6 +28,7 @@
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "drizzle-orm": "^0.40.1",
+    "framer-motion": "^12.33.0",
     "lucide-react": "^0.483.0",
     "next": "15.2.3",
     "openai-edge": "^1.2.2",
@@ -35,8 +36,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.2",
-    "tw-animate-css": "^1.2.4",
-    "typewriter-effect": "^2.21.0"
+    "tw-animate-css": "^1.2.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
