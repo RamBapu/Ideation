@@ -1,20 +1,27 @@
 export async function generateAIImage(noteName: string) {
+  if (!process.env.POLLEN_KEY) {
+    throw new Error("POLLEN_KEY is not configured");
+  }
+
   try {
-    const prompt = `A beautifully designed notebook image titled ${noteName}`;
+    const prompt = `A beautifully designed image titled ${noteName}`;
 
-    function generateRandomNumber(): number {
-      return Math.floor(Math.random() * 100000000) + 1;
+    const res = await fetch(
+      `https://gen.pollinations.ai/image/${prompt}?width=512&height=512&model=flux`,
+      {
+        headers: {
+          Accept: "*/*",
+          Authorization: `Bearer ${process.env.POLLEN_KEY}`,
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`Pollinations error: ${res.status}`);
     }
 
-    const randomSeed = generateRandomNumber();
-    const imageURL = `https://image.pollinations.ai/prompt/${encodeURIComponent(
-      prompt
-    )}?seed=${randomSeed}&width=512&height=512&nologo=True`;
-
-    if (!imageURL) {
-      throw new Error("Failed to generate image.");
-    }
-
+    const imageURL = res.url;
+    console.log("res: ", res);
     return imageURL;
   } catch (error) {
     console.error("Image generation failed:", error);

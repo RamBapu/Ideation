@@ -9,6 +9,8 @@ import TipTapMenuBar from "./TipTapMenuBar";
 import { useDebounce } from "@/lib/useDebounce";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { Loader2 } from "lucide-react";
+import { Separator } from "./ui/separator";
 
 type Props = {
   note: Note;
@@ -16,11 +18,12 @@ type Props = {
 
 const TipTapEditor = ({ note }: Props) => {
   const [editorState, setEditorState] = useState<string>(
-    note?.editorState || `<h1>${note.name}</h1>`
+    note?.editorState || `<h1>${note.name}</h1>`,
   );
 
   // Tiptap editor configuration
   const editor = useEditor({
+    immediatelyRender: false,
     autofocus: true,
     extensions: [StarterKit],
     content: editorState,
@@ -30,21 +33,22 @@ const TipTapEditor = ({ note }: Props) => {
   });
 
   // AI Autocomple mutation
-  const mutation = useMutation<string, Error, string>({
-    mutationFn: async (prompt) => {
-      const response = await axios.post("/api/completion", { prompt });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      if (data && editor) {
-        editor.commands.insertContent(data);
-      }
-    },
-  });
+  const { mutateAsync: autoCompleteMutation, isPending: isAutoCompleting } =
+    useMutation<string, Error, string>({
+      mutationFn: async (prompt) => {
+        const response = await axios.post("/api/completion", { prompt });
+        return response.data;
+      },
+      onSuccess: (data) => {
+        if (data && editor) {
+          editor.commands.insertContent(` ${data}`);
+        }
+      },
+    });
 
   const handleAutoComplete = () => {
     const prompt = editorState.split(" ").slice(-30).join(" ");
-    mutation.mutateAsync(prompt);
+    autoCompleteMutation(prompt);
   };
 
   // Save note mutation
@@ -75,24 +79,37 @@ const TipTapEditor = ({ note }: Props) => {
           {isPending ? "Saving..." : "Saved"}
         </Button>
       </div>
+      <div className="mt-4">
+        <Separator />
+      </div>
 
       {/* Editor content */}
       <div className="prose prose-sm w-full mt-4">
         <EditorContent editor={editor} />
       </div>
 
+      <div className="h-4">
+        <Separator />
+      </div>
+
       {/* Auto complete tip */}
-      <div className="h-4"></div>
-      <span className="text-sm">
-        Tip:{" "}
-        <kbd
-          onClick={handleAutoComplete}
-          className="cursor-pointer px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg"
-        >
-          Click Here
-        </kbd>{" "}
-        for AI autocomplete
-      </span>
+      {isAutoCompleting ? (
+        <span className="text-md flex text-green-500 items-center">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Auto completing in progress
+        </span>
+      ) : (
+        <span className="text-md flex items-center text-green-500">
+          Tip:{"  "}
+          <kbd
+            onClick={handleAutoComplete}
+            className="cursor-pointer mx-2 px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">
+            Click Here
+          </kbd>
+          {"  "}
+          for AI autocomplete
+        </span>
+      )}
     </>
   );
 };

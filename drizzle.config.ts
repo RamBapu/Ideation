@@ -1,4 +1,6 @@
-import { defineConfig } from 'drizzle-kit';
+import { defineConfig } from "drizzle-kit";
+
+// Outside the src directory - using dotenv to import env
 import * as dotenv from "dotenv";
 
 dotenv.config({
@@ -6,10 +8,10 @@ dotenv.config({
 });
 
 export default defineConfig({
-    out: './drizzle',
-    schema: './src/lib/db/schema.ts',
-    dialect: 'postgresql',
-    dbCredentials: {
-      url: process.env.DATABASE_URL!,
-    },
-  });
+  out: "./drizzle",
+  schema: "./src/lib/db/schema.ts",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+});

@@ -1,48 +1,65 @@
 // /api/completion
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GOOGLE_GEMINI_API_KEY!,
+});
 
 export async function POST(req: Request) {
   try {
     const { prompt } = await req.json();
 
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-    // Prompt for auto-completion
-    const formattedPrompt = `I am writing a piece of text in a notion text editor app.
-        Help me complete my train of thought here: ##${prompt}##
-        keep the tone of the text consistent with the rest of the text.
-        keep the response short and sweet.`;
-
-    // Generate content
-    const response = await model.generateContent({
-      contents: [
-        // { role: "system", parts: [{ text: sysPrompt }] },
-        { role: "user", parts: [{ text: formattedPrompt }] },
-      ],
-      generationConfig: { maxOutputTokens: 30, temperature: 0.7 },
-    });
-
-    // Extract only the generated text
-    let generatedText =
-      response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!generatedText) {
-      throw new Error("Failed to generate content.");
+    if (!prompt || typeof prompt !== "string") {
+      return NextResponse.json({ message: "Invalid prompt" }, { status: 400 });
     }
 
-    // **Clean the response:** Remove the prompt if it appears in the output
+    const formattedPrompt = `
+          You are helping autocomplete text in a Notion-style editor.
+
+          Text so far:
+          "${prompt}"
+
+          Continue naturally.
+          Keep the same tone.
+          Keep it short (1–2 sentences).
+          `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: formattedPrompt,
+      config: {
+        // maxOutputTokens: 40,
+        temperature: 0.7,
+      },
+    });
+
+    let generatedText = response.text?.trim();
+
+    if (!generatedText) {
+      throw new Error("EMPTY_MODEL_RESPONSE");
+    }
+
+    // Clean the response
     generatedText = generatedText
       .replace(new RegExp(`##?${prompt}##?`, "gi"), "")
-      .replace(/^(\.\.\.|…)/, "")
-      .trim();
+      .replace(/^(\.\.\.|…)/, "");
 
     return new NextResponse(generatedText);
-  } catch (error) {
-    console.error("Failed to auto complete", error);
+  } catch (error: unknown) {
+    console.error("Failed to auto complete:", error);
+
+    // ✅ Rate-limit handling (RESOURCE_EXHAUSTED)
+    if (error instanceof Error && "status" in error && error?.status === 429) {
+      return NextResponse.json(
+        { message: "AI rate limit reached. Try again shortly." },
+        { status: 429 },
+      );
+    }
+
     return NextResponse.json(
-      { message: "Failed to generate note image" },
-      { status: 500 }
+      { message: "Failed to generate completion" },
+      { status: 500 },
     );
   }
 }
