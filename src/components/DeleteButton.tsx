@@ -41,7 +41,11 @@ const DeleteButton = ({ noteId }: Props) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant={"destructive"} size="sm" className='cursor-pointer' disabled={isPending}>
+        <Button
+          variant={"destructive"}
+          size="sm"
+          className="cursor-pointer"
+          disabled={isPending}>
           <Trash /> Delete
         </Button>
       </AlertDialogTrigger>
@@ -55,11 +59,12 @@ const DeleteButton = ({ noteId }: Props) => {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="cursor-pointer">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => deleteNote()}
-            className="bg-red-600 hover:bg-red-700"
-          >
+            className="bg-red-600 hover:bg-red-700 cursor-pointer">
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

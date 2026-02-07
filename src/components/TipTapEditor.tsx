@@ -18,7 +18,7 @@ type Props = {
 
 const TipTapEditor = ({ note }: Props) => {
   const [editorState, setEditorState] = useState<string>(
-    note?.editorState || `<h1>${note.name}</h1>`,
+    note?.editorState || `<b>${note.name}</b>`,
   );
 
   // Tiptap editor configuration
