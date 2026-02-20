@@ -3,7 +3,9 @@
 > A full-stack, AI-enhanced notes application built with **Next.js 16**, **TypeScript**, and modern production-grade tools.
 
 🔗 **Live App:** https://ideation-notes-app.vercel.app
+
 📦 **Repository:** https://github.com/RamBapu/Ideation
+
 🚀 **Deployed on:** Vercel
 
 ---
