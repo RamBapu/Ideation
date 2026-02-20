@@ -1,5 +1,14 @@
 # 🚀 Ideation — AI-Powered Notes Web Application
 
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-blue?logo=postgresql)
+![Drizzle ORM](https://img.shields.io/badge/ORM-Drizzle-orange)
+![Clerk](https://img.shields.io/badge/Auth-Clerk-purple)
+![AI](https://img.shields.io/badge/AI-Google%20Gemini-green)
+![Deployment](https://img.shields.io/badge/Deployment-Vercel-black?logo=vercel)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 > A full-stack, AI-enhanced notes application built with **Next.js 16**, **TypeScript**, and modern production-grade tools.
 
 🔗 **Live App:** https://ideation-notes-app.vercel.app
