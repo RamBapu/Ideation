@@ -93,7 +93,7 @@ Designed using real-world SaaS architecture principles.
 
 ---
 
-## 🔍 Architecture Explanation
+# 🔍 Architecture Explanation
 
 ### 1️⃣ Frontend Layer
 
